@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>小医官 · 传太医</title>
+<style>
+:root{--bg:#1c130d;--card:#e9dcb8;--ink:#3a2512;--red:#a62b1f;--gold:#c9a24a;--jade:#6fd1b0;--wood:#8a5530;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:#f3e6c8;font-family:"Songti SC","Noto Serif SC",serif}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#app{max-width:480px;margin:0 auto;padding:10px 12px 24px;min-height:100%}
+.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #5a3d22;padding-bottom:8px;margin-bottom:10px}
+.top b{font-size:20px;color:var(--gold)}.top small{opacity:.8}
+.bar{height:8px;background:#3a2a1c;border-radius:4px;overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:var(--jade)}
+.news{background:#2b1d13;border-left:3px solid var(--red);padding:8px;font-size:14px;margin:8px 0}
+.door{display:block;width:100%;margin:10px 0;padding:14px;background:linear-gradient(#3b2414,#24150b);border:2px solid var(--gold);border-radius:14px;color:#f3e6c8;font:inherit;font-size:18px;text-align:center}
+.door small{display:block;opacity:.7;font-size:13px;margin-top:2px}
+.card{background:var(--card);color:var(--ink);border-radius:8px;padding:12px;margin:10px 0}
+.card h3{margin:0 0 6px;text-align:center;letter-spacing:4px}
+.sym{font-size:17px;line-height:1.6}
+.row{display:flex;gap:6px;margin:6px 0;align-items:center}.row>span{width:28px;color:var(--red);font-weight:bold}
+.opt{flex:1;padding:8px 2px;border:1px solid #b9a77a;background:#d9c99c;color:var(--ink);border-radius:6px;font:inherit;font-size:15px}
+.opt small{display:block;font-size:11px;opacity:.7}.opt.on{background:var(--red);color:#fff;border-color:var(--red)}
+.btn{display:block;width:100%;padding:12px;margin:8px 0;background:var(--red);border:2px solid var(--gold);border-radius:8px;color:#fff;font:inherit;font-size:17px}
+.btn.alt{background:#3b2a1c}
+canvas{width:100%;height:120px;background:#1a110b;border:1px solid var(--gold);border-radius:6px;display:block}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.dr{background:linear-gradient(#a8693a,#7a4724);border:1px solid #5a3519;border-radius:5px;color:#fff3d6;font:inherit;font-size:14px;padding:12px 0;text-align:center}
+.dr.bad{animation:sh .3s;background:#7a2a20}@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.scale{height:18px;background:#cdbb8a;border-radius:9px;position:relative;margin:14px 0 6px}.scale i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:9px;max-width:100%}
+.scale em{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--red)}
+.msg{text-align:center;min-height:22px;margin:6px 0;color:var(--gold)}
+.cn{font-size:12px;opacity:.65}
+</style></head><body><div id="app"></div>
+<script>
+const H=["白术","菊花","川芎","半夏","党参","柴胡","黄芪","山楂","陈皮","连翘","大枣","枸杞","山药","茯苓","薄荷","金银花","艾叶","桂枝","当归","甘草","白芍","红花","知母","五味子","桃仁","麦冬","丹参","酸枣仁","黄芩","砂仁"];
+const F=[
+{n:"芍药汤",h:[["白芍",3],["当归",2],["黄芩",2]]},
+{n:"桂枝汤",h:[["桂枝",3],["白芍",3],["甘草",1]]},
+{n:"小柴胡汤",h:[["柴胡",3],["黄芩",2],["半夏",2]]},
+{n:"补血汤",h:[["黄芪",3],["当归",2],["党参",2]]},
+{n:"二陈汤",h:[["半夏",3],["陈皮",2],["茯苓",2]]},
+{n:"银翘散",h:[["金银花",3],["连翘",2],["薄荷",1]]},
+{n:"酸枣仁汤",h:[["酸枣仁",3],["知母",2],["茯苓",2]]},
+{n:"桃红汤",h:[["桃仁",3],["红花",2],["当归",2]]},
+{n:"四君子汤",h:[["党参",3],["白术",2],["茯苓",2]]},
+{n:"桑菊饮",h:[["菊花",3],["连翘",2],["薄荷",1]]},
+{n:"生脉饮",h:[["党参",3],["麦冬",2],["五味子",2]]}];
+const C=[
+{who:"顾贵人",s:"隔帘望诊，不得一股腥臭。下痢赤白，渴不欲饮，发热。",p:[0,2,3],f:0},
+{who:"周嬷嬷",s:"汗出恶风，头痛发热，鼻鸣干呕。",p:[0,1,0],f:1},
+{who:"李宫女",s:"寒热往来，胸胁胀满，口苦咽干，不思饮食。",p:[1,1,2],f:2},
+{who:"陈答应",s:"面色萎黄，头晕乏力，心悸气短，唇色淡白。",p:[2,0,4],f:3},
+{who:"王常在",s:"胸闷痰多，恶心呕吐，头眩心悸，舌苔白腻。",p:[1,1,1],f:4},
+{who:"赵美人",s:"发热微恶风寒，咽喉肿痛，口渴，咳嗽。",p:[0,2,0],f:5},
+{who:"孙才人",s:"夜不能寐，心烦心悸，头晕目眩，咽干口燥。",p:[1,2,4],f:6},
+{who:"钱选侍",s:"经行腹痛，痛如针刺，经色紫暗有块，拒按。",p:[2,1,2],f:7},
+{who:"吴采女",s:"面白少气，食少便溏，四肢乏力，语声低微。",p:[1,0,4],f:8},
+{who:"郑更衣",s:"咳嗽，身热不甚，口微渴，目赤头痛。",p:[0,1,1],f:9},
+{who:"冯贵妃",s:"汗多神疲，体倦乏力，气短懒言，咽干口渴。",p:[2,2,4],f:10}];
+const POS=["浮","中","沉"],POSD=["轻按最清楚","","重按才有"],RATE=["迟","平","数"],RD=["一息三至","四五至","六至以上"],SH=["平","滑","弦","紧","细"],SD=["圆和","如珠走盘","如按琴弦","如转绳索","细如丝线"];
+const NEWS=["宫外闹痘疫，宫门落锁，太医院进出要熏艾。","春雨绵绵，药材易潮，抓药需仔细。","贵人们近日多感风寒。","太医院新来的医士，要多背汤头。"];
+const HI={白术:"甘苦温|健脾益气，燥湿利水，止汗",菊花:"甘苦微寒|疏风清热，平肝明目",川芎:"辛温|活血行气，祛风止痛（孕妇慎用）",半夏:"辛温有毒|燥湿化痰，降逆止呕",党参:"甘平|补中益气，生津养血",柴胡:"苦微寒|和解少阳，疏肝升阳",黄芪:"甘微温|补气升阳，固表利水",山楂:"酸甘微温|消食化积，行气散瘀",陈皮:"辛苦温|理气健脾，燥湿化痰",连翘:"苦微寒|清热解毒，消肿散结",大枣:"甘温|补中益气，养血安神",枸杞:"甘平|滋补肝肾，益精明目",山药:"甘平|补脾养胃，益肺固肾",茯苓:"甘淡平|利水渗湿，健脾宁心",薄荷:"辛凉|疏散风热，清利头目",金银花:"甘寒|清热解毒，疏散风热",艾叶:"辛苦温|温经止血，散寒止痛",桂枝:"辛甘温|发汗解肌，温通经脉",当归:"甘辛温|补血活血，调经止痛",甘草:"甘平|补脾益气，清热解毒，调和诸药",白芍:"苦酸微寒|养血敛阴，柔肝止痛",红花:"辛温|活血通经，祛瘀止痛（孕妇忌用）",知母:"苦甘寒|清热泻火，滋阴润燥",五味子:"酸甘温|收敛固涩，益气生津，宁心",桃仁:"苦甘平|活血祛瘀，润肠通便",麦冬:"甘微苦微寒|养阴生津，润肺清心",丹参:"苦微寒|活血祛瘀，清心除烦",酸枣仁:"甘酸平|养心安神，敛汗",黄芩:"苦寒|清热燥湿，泻火解毒",砂仁:"辛温|化湿开胃，温脾止泻"};
+const hi=t=>HI[t].split("|");
+const S0=()=>({day:1,max:30,coin:100,rep:0,hp:10}),rank=()=>S.rep>=20?"太医":S.rep>=10?"御医":S.rep>=4?"医正":"医士";
+let S=S0(),K={},cs=null,raf=0;
+try{const v=JSON.parse(localStorage.getItem("taiyi")||"{}");if(v.S)S=v.S;if(v.K)K=v.K}catch(e){}
+function save(){try{localStorage.setItem("taiyi",JSON.stringify({S,K}))}catch(e){}}
+const $=id=>document.getElementById(id),R=a=>a[Math.floor(Math.random()*a.length)],sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+function hdr(){return `<div class="top"><div><b>${["","一","二","三","四","五","六","七","八","九","十"][Math.min(10,S.day)]||S.day}日 · ${rank()}小安</b><div class="cn">第${S.mo||1}月 · 第${S.day}天 / 共${S.max}天</div></div><small>铜钱 ${S.coin}<br>名望 ${S.rep}</small></div>`}
+function stopL(){cancelAnimationFrame(raf)}
+function hub(){stopL();save();if(S.hp<=0){S.hp=4;S.day++}if(S.day>S.max)return end();
+$("app").innerHTML=hdr()+`<div class="news">宫里：${R(NEWS)}</div>
+<div class="cn">体力</div><div class="bar"><i style="width:${S.hp*10}%"></i></div>
+<button class="door" onclick="consult()">值房 · 坐诊<small>望闻问切，开方抓药</small></button>
+<button class="door" onclick="herbQ()">药房 · 认药<small>在抽屉里找到药</small></button>
+<button class="door" onclick="formQ()">书房 · 背汤<small>汤头歌，背熟了才不出错</small></button>
+<button class="door" onclick="dict()">药典<small>已学 ${Object.keys(K).length}/30 味药，性味功效</small></button>
+<button class="door" onclick="rest()">歇着<small>恢复体力，过一天</small></button>`}
+function rest(){S.hp=Math.min(10,S.hp+4);S.day++;hub()}
+function end(){stopL();let t=S.rep>=20?"名医":S.rep>=10?"良医":S.rep>=4?"医士":"学徒";
+$("app").innerHTML=hdr()+`<div class="card"><h3>过月 · 结算</h3><p class="sym" style="text-align:center">铜钱 ${S.coin}<br>名望 ${S.rep}<br>评语：<b style="color:#a62b1f">${t}</b></p></div><button class="btn" onclick="S.day=1;S.hp=10;S.mo=(S.mo||1)+1;hub()">继续行医 · 下一月</button><button class="btn alt" onclick="S=S0();hub()">重新开始</button>`}
+function use(){S.day++;S.hp=Math.max(0,S.hp-1)}
+/* ---- consult ---- */
+function consult(){const n=Math.min(C.length,5+Math.floor(S.rep/2));cs={c:R(C.slice(0,n)),sel:[null,null,null],probe:0};stage1()}
+function stage1(){
+$("app").innerHTML=hdr()+`<div class="card"><h3>${cs.c.who}</h3><div class="sym">${cs.c.s}</div></div><button class="btn" onclick="pulse()">隔帘请脉</button>`}
+function pulse(){
+const rows=(k,n,d,dd)=>`<div class="row"><span>${k}</span>${n.map((x,i)=>`<button class="opt ${cs.sel[{位:0,至:1,形:2}[k]]===i?"on":""}" onclick="pick('${k}',${i})">${x}<small>${dd[i]}</small></button>`).join("")}</div>`;
+$("app").innerHTML=hdr()+`<div class="cn">指下 · 点「浮 / 中 / 沉」试按，看哪一层最清楚；圆圈一呼一吸，数一息几至</div>
+<div style="display:flex;gap:8px;align-items:center"><canvas id="cv" width="340" height="120"></canvas></div>
+<div class="row">${POS.map((x,i)=>`<button class="opt ${cs.probe===i?"on":""}" onclick="cs.probe=${i};buzz();pulse()">试按 ${x}</button>`).join("")}</div>
+<div class="card"><h3>脉案</h3>${rows("位",POS,0,POSD)}${rows("至",RATE,0,RD)}${rows("形",SH,0,SD)}</div>
+<button class="btn" onclick="writeCase()">写脉案 · 开方</button>`;draw()}
+function pick(k,i){cs.sel[{位:0,至:1,形:2}[k]]=i;pulse()}
+function draw(){const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,Hh=cv.height,p=cs.c.p,per=4/[3,5,7][p[1]],f=[1,.5,.18][Math.abs(cs.probe-p[0])];
+function prof(ph,t){const g=(c,w)=>Math.exp(-(((ph-c)/w)**2));
+switch(p[2]){case 0:return .6*g(.15,.07)+.15*g(.4,.08);case 1:return .6*g(.22,.14);case 2:return .85*Math.exp(-(((ph-.2)/.1)**4))+.1*g(.5,.1);case 3:return .95*g(.15,.04)+.06*Math.sin(t*60);default:return .25*g(.15,.07)}}
+function loop(){const now=performance.now()/1000;x.clearRect(0,0,W,Hh);x.strokeStyle="#6fd1b0";x.lineWidth=2;x.beginPath();
+for(let i=0;i<W-70;i++){const t=now-(W-70-i)/50,ph=((t/per)%1+1)%1,y=Hh-18-prof(ph,t)*f*(Hh-40);i?x.lineTo(i,y):x.moveTo(i,y)}x.stroke();
+const b=(Math.sin(now*Math.PI/2)+1)/2;x.strokeStyle="#c9a24a";x.beginPath();x.arc(W-35,Hh/2,12+b*16,0,7);x.stroke();x.fillStyle="#c9a24a";x.font="12px serif";x.fillText("呼吸",W-47,Hh-6);raf=requestAnimationFrame(loop)}
+stopL();loop()}
+function writeCase(){stopL();const c=cs.c;if(cs.sel.includes(null)){alert("脉案还没写完");return}
+cs.ok=cs.sel.filter((v,i)=>v===c.p[i]).length;
+const opts=sh([c.f,...sh([0,1,2,3,4].filter(i=>i!==c.f)).slice(0,3)]);
+$("app").innerHTML=hdr()+`<div class="card"><h3>脉案 ${cs.ok}/3 准</h3><div class="sym">${c.who}：${c.s}<br><span class="cn">${POS[c.p[0]]} · ${RATE[c.p[1]]} · ${SH[c.p[2]]}（正确脉象）</span></div></div><div class="msg">选一个方子</div>${opts.map(i=>`<button class="door" style="padding:10px;font-size:17px" onclick="chooseF(${i})">${F[i].n}</button>`).join("")}`}
+function chooseF(i){if(i!==cs.c.f){S.rep=Math.max(0,S.rep-1);S.coin-=10;use();$("app").innerHTML=hdr()+`<div class="card"><h3>开错方</h3><p class="sym">此方不对症。正解是「${F[cs.c.f].n}」：${F[cs.c.f].h.map(x=>x[0]+x[1]+"钱").join("、")}。<br>名望 -1，铜钱 -10。</p></div><button class="btn" onclick="hub()">回院子</button>`;return}
+cs.k=0;cs.res=[];weigh()}
+/* ---- weighing ---- */
+function weigh(){const f=F[cs.c.f],[name,w]=f.h[cs.k];cs.cur=0;cs.name=name;K[name]=1;cs.w=w;
+const ds=sh([name,...sh(H.filter(h=>h!==name)).slice(0,14)]);cs.ds=ds;drawW()}
+function drawW(msg){const w=cs.w,cur=cs.cur;
+$("app").innerHTML=hdr()+`<div class="card"><h3>${cs.name} · ${w}钱</h3><div class="cn" style="text-align:center;color:#3a2512">先找对抽屉，点一下抓一把，盘里约 ${cur.toFixed(1)} 钱<br>${hi(cs.name)[1]}</div>
+<div class="scale"><i style="width:${Math.min(100,cur/(w*2)*100)}%"></i><em style="left:50%"></em></div></div>
+<div class="msg">${msg||""}</div>
+<div class="grid">${cs.ds.map(d=>`<button class="dr" onclick="grab('${d}',this)">${d}</button>`).join("")}</div>
+<div class="row" style="margin-top:12px"><button class="opt" onclick="cs.cur=Math.max(0,cs.cur-.4);drawW()">取出一撮</button><button class="opt" onclick="done()">称好了</button></div>`}
+function grab(d,el){if(d!==cs.name){el.classList.add("bad");S.hp=Math.max(0,S.hp-0);cs.wrong=(cs.wrong||0)+1;$(".msg")&&0;setTimeout(()=>drawW("拿错了，这是「"+d+"」"),250);return}cs.cur+=.5+Math.random()*.8;drawW()}
+function done(){const ok=Math.abs(cs.cur-cs.w)<=.35;cs.res.push(ok);if(++cs.k<F[cs.c.f].h.length)return weigh();finish()}
+function finish(){const ok=cs.res.filter(x=>x).length,all=ok===cs.res.length;use();
+const g=all&&cs.ok===3?40:all?30:ok?15:5,r=all?(cs.ok===3?3:2):ok?1:0;S.coin+=g;S.rep+=r;
+$("app").innerHTML=hdr()+`<div class="card"><h3>${all?"药到病除":"勉强交差"}</h3><p class="sym" style="text-align:center">脉案 ${cs.ok}/3 · 称药 ${ok}/${cs.res.length}<br>${cs.c.who}${all?"服药后好转，赏铜钱":"病情反复，仅得铜钱"} ${g}<br>名望 +${r}</p></div><button class="btn" onclick="hub()">回院子</button>`}
+/* ---- herb quiz ---- */
+function herbQ(){cs={n:0,ok:0};hq()}
+function hq(){const t=R(H);cs.t=t;cs.m=Math.random()<.5;cs.ds=sh([t,...sh(H.filter(h=>h!==t)).slice(0,14)]);
+$("app").innerHTML=hdr()+`<div class="card"><h3>药房 · 认药 ${cs.n+1}/3</h3><p class="sym" style="text-align:center">${cs.m?"哪个抽屉的药："+hi(t)[1]:"找到「"+t+"」的抽屉"}</p></div><div class="grid">${cs.ds.map(d=>`<button class="dr" onclick="hAns('${d}')">${d}</button>`).join("")}</div>`}
+function hAns(d){K[cs.t]=1;const ok=d===cs.t;if(ok)cs.ok++;cs.n++;const[a,b]=hi(cs.t);$("app").innerHTML=hdr()+`<div class="card"><h3 style="color:${ok?"#2d7a3a":"#a62b1f"}">${ok?"✔ 答对了":"✘ 答错了"}</h3><p class="sym">${ok?"":"你点了「"+d+"」："+hi(d)[0]+"，"+hi(d)[1]+"。<br>"}正确答案是「${cs.t}」<br>性味：${a}<br>功效：${b}</p></div><button class="btn" onclick="${cs.n<3?"hq()":"hFin()"}">${cs.n<3?"下一题":"完成"}</button>`}
+function hFin(){use();const g=cs.ok*5;S.coin+=g;S.rep+=cs.ok===3?1:0;
+$("app").innerHTML=hdr()+`<div class="card"><h3>认药完毕</h3><p class="sym" style="text-align:center">答对 ${cs.ok}/3<br>铜钱 +${g}${cs.ok===3?"，名望 +1":""}</p></div><button class="btn" onclick="hub()">回院子</button>`}
+/* ---- formula quiz ---- */
+function formQ(){cs={n:0,ok:0};fq()}
+function fq(){const f=F[Math.floor(Math.random()*F.length)];cs.f=f;
+const own=f.h.map(x=>x[0]).join("、"),opts=sh([own,...sh(F.filter(x=>x!==f)).slice(0,3).map(x=>x.h.map(y=>y[0]).join("、"))]);cs.own=own;
+$("app").innerHTML=hdr()+`<div class="card"><h3>书房 · 背汤 ${cs.n+1}/3</h3><p class="sym" style="text-align:center">「${f.n}」由哪三味药组成？</p></div>${opts.map(o=>`<button class="door" style="padding:10px;font-size:17px" onclick="fAns(this,'${o}')">${o}</button>`).join("")}`}
+function fAns(b,o){const ok=o===cs.own;if(ok)cs.ok++;cs.n++;$("app").innerHTML=hdr()+`<div class="card"><h3 style="color:${ok?"#2d7a3a":"#a62b1f"}">${ok?"✔ 答对了":"✘ 答错了"}</h3><p class="sym">${ok?"":"你选了："+o+"。<br>"}「${cs.f.n}」的组成是：${cs.own}<br>${cs.f.h.map(x=>x[0]+"（"+x[1]+"钱）："+hi(x[0])[1]).join("<br>")}</p></div><button class="btn" onclick="${cs.n<3?"fq()":"fFin()"}">${cs.n<3?"下一题":"完成"}</button>`}
+function fFin(){use();const g=cs.ok*6;S.coin+=g;S.rep+=cs.ok===3?1:0;
+$("app").innerHTML=hdr()+`<div class="card"><h3>背汤完毕</h3><p class="sym" style="text-align:center">答对 ${cs.ok}/3<br>铜钱 +${g}${cs.ok===3?"，名望 +1":""}</p></div><button class="btn" onclick="hub()">回院子</button>`}
+function buzz(){if(!navigator.vibrate||!cs)return;const p=cs.c.p,per=4000/[3,5,7][p[1]],f=[1,.5,.18][Math.abs(cs.probe-p[0])],d=Math.max(6,Math.round([28,40,55,16,10][p[2]]*f*1.4)),a=[];for(let i=0;i<6;i++){a.push(d);if(p[2]===3){a.push(30);a.push(d)}a.push(Math.max(40,Math.round(per-d)))}navigator.vibrate(a)}
+function dict(){stopL();$("app").innerHTML=hdr()+`<div class="card"><h3>药典 ${Object.keys(K).length}/30</h3><div class="cn" style="text-align:center;color:#3a2512">点药名查看；认药、抓药时遇到的药会自动记入（亮色为已学）</div></div><div class="grid">${H.map(h=>`<button class="dr" style="${K[h]?"":"opacity:.5"}" onclick="dd('${h}')">${h}</button>`).join("")}</div><button class="btn alt" onclick="hub()">回院子</button>`}
+function dd(h){K[h]=1;save();const[a,b]=hi(h),fs=F.filter(f=>f.h.some(x=>x[0]===h)).map(f=>f.n).join("、");$("app").innerHTML=hdr()+`<div class="card"><h3>${h}</h3><p class="sym">性味：${a}<br>功效：${b}<br>常入：${fs||"（本游戏暂无）"}</p></div><button class="btn" onclick="dict()">返回药典</button>`}
+hub();
+</script></body></html>

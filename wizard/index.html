@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Moonspire Academy</title>
+<style>
+:root{--bg:#150f24;--card:#e9e2f4;--ink:#2a1f45;--red:#8e3b9c;--gold:#e1c15a;--ok:#2d7a3a;color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:#efe9ff;font-family:Georgia,"Times New Roman",serif}
+#app{max-width:480px;margin:0 auto;padding:10px 12px 24px;min-height:100%}
+.top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #4a3a78;padding-bottom:8px;margin-bottom:10px}.top b{font-size:20px;color:var(--gold)}.top small{opacity:.85;text-align:right}
+.bar{height:8px;background:#2a1f45;border-radius:4px;overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:#7fd6c0}
+.news{background:#21183a;border-left:3px solid var(--gold);padding:8px;font-size:14px;margin:8px 0;font-style:italic}
+.door{display:block;width:100%;margin:10px 0;padding:14px;background:linear-gradient(#35266a,#201742);border:2px solid var(--gold);border-radius:14px;color:#efe9ff;font:inherit;font-size:18px;text-align:center}.door small{display:block;opacity:.7;font-size:13px;margin-top:2px}
+.card{background:var(--card);color:var(--ink);border-radius:8px;padding:12px;margin:10px 0}.card h3{margin:0 0 6px;text-align:center;letter-spacing:2px}.sym{font-size:16px;line-height:1.6}
+.btn{display:block;width:100%;padding:12px;margin:8px 0;background:var(--red);border:2px solid var(--gold);border-radius:8px;color:#fff;font:inherit;font-size:17px}.btn.alt{background:#35266a}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.g2{grid-template-columns:repeat(2,1fr)}
+.dr{background:linear-gradient(#5b4a9a,#3d2f73);border:1px solid #2a1f55;border-radius:8px;color:#f4efff;font:inherit;font-size:15px;padding:12px 4px;text-align:center}.dr.on{background:#c9a227;color:#20143a}.dr small{display:block;font-size:11px;opacity:.8}
+.bigbar{height:26px;background:#cdc4e6;border-radius:13px;position:relative;margin:16px 0 6px;overflow:hidden}.bigbar i{position:absolute;left:0;top:0;bottom:0;background:#8e63d0}.bigbar em{position:absolute;top:0;bottom:0;background:rgba(225,193,90,.75)}
+#pad{height:220px;background:#1f1536;border:2px dashed var(--gold);border-radius:12px;touch-action:none;display:flex;align-items:center;justify-content:center;font-size:44px;letter-spacing:12px;color:var(--gold)}
+.cn{font-size:12px;opacity:.75}.msg{text-align:center;min-height:22px;color:var(--gold)}
+</style></head><body><div id="app"></div>
+<script>
+const I=[["Moonpetal","calming","Blooms silver only at night and steadies a racing heart."],["Silverleaf","soothing","Cool, smooth leaves used in salves and gentle brews."],["Starlight Dew","clarity","Gathered before dawn; it makes potions mild and bright."],["Dragonfly Wing","speed","Beats faster than the eye can follow."],["Thunder Fern","energy","Crackles with sparks when a storm is near."],["Fireflower","heat","Its petals stay hot even in the snow."],["Raven Sage","memory","Said to remember every whisper it has heard."],["Glimmer Moss","healing","Grows on old stones and slowly mends cracks."],["Owl Feather","sight","A feather that lets you see in the dark."],["Frost Thistle","cold","Frozen spines that never melt."],["Ember Root","warmth","Smoulders slowly and keeps the chill away."],["Ironbark Shaving","strength","Wood tougher than iron."],["Mist Pearl","stealth","A pearl that exhales a cloak of fog."],["Honey Bloom","sweetness","Sweetens bitter brews."]];
+const P=[["Calming Draught",[0,1,2],30,0,"Soothes nerves and helps you sleep."],["Swiftness Tonic",[3,4,5],20,2,"Quickens your feet for a short while."],["Clear-Mind Elixir",[6,2,13],40,1,"Sharpens memory and focus."],["Winter Ward",[10,5,11],30,1,"Keeps the cold out for a whole night."],["Night-Sight Drops",[8,0,12],25,0,"Lets you see clearly in the dark."],["Healing Salve",[1,7,2],35,0,"Closes small cuts and scrapes."],["Strength Tonic",[11,4,10],20,2,"Lends power to tired arms."]];
+const PC=[[0,"I can't sleep. My exams start tomorrow!"],[1,"I'm late for the broom race. Something quick, please!"],[2,"I forgot everything I studied. I need to focus."],[3,"Night patrol in the snow. I must stay warm."],[4,"I need to see my way through the dark tunnels."],[5,"I scraped my hand on the greenhouse glass."],[6,"I've carried heavy crates all day and my arms are done."]];
+const SP=[["Glow","UDU","Lights the tip of your wand.","A soft light, handy in dark corridors."],["Gust","RRL","Summons a strong wind.","Two pushes forward and one pull back."],["Mend","DUD","Repairs small breaks.","Draws the broken edges together."],["Seal","LRL","Locks a door tight.","A back-and-forth like a turning key."],["Float","UUU","Lifts light objects.","Three rising strokes."],["Ward","DLR","Raises a shimmering shield.","Down, then a sweeping arc."],["Spark","RUR","Makes a small bright spark.","Quick, angular strokes."],["Echo","LDL","Repeats a sound.","Left, down, back again."]];
+const SC=[[0,"The corridor is pitch dark."],[4,"A heavy vase is on a high shelf. Lift it gently."],[2,"My teacup just cracked in half!"],[3,"Someone must not open this door tonight."],[1,"A candle needs blowing across the hall."],[5,"Something is flying at me!"],[6,"I need a tiny flame to light the lamp."],[7,"I want to hear that whisper again."]];
+const AR={U:"↑",D:"↓",L:"←",R:"→"},NEWS=["The moon is high over the spire tonight.","Professor says: measure twice, brew once.","The owls are restless.","A student fell asleep in the library again."];
+const S0=()=>({day:1,max:30,mo:1,coin:100,rep:0,hp:10}),rank=()=>S.rep>=20?"Archmage":S.rep>=10?"Mage":S.rep>=4?"Adept":"Apprentice";
+let S=S0(),K={},cs=null,raf=0;
+try{const v=JSON.parse(localStorage.getItem("wiz")||"{}");if(v.S)S=v.S;if(v.K)K=v.K}catch(e){}
+const save=()=>{try{localStorage.setItem("wiz",JSON.stringify({S,K}))}catch(e){}};
+const $=id=>document.getElementById(id),R=a=>a[Math.floor(Math.random()*a.length)],sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]),nK=()=>[...I,...SP].filter(x=>K[x[0]]).length,TOT=I.length+SP.length;
+const hdr=()=>`<div class="top"><div><b>${rank()}</b><div class="cn">Month ${S.mo} · Day ${S.day} / ${S.max}</div></div><small>Gold ${S.coin}<br>Fame ${S.rep}</small></div>`;
+const stopL=()=>cancelAnimationFrame(raf),use=()=>{S.day++;S.hp=Math.max(0,S.hp-1)},unl=a=>a.slice(0,Math.min(a.length,5+Math.floor(S.rep/2)));
+const page=h=>$("app").innerHTML=hdr()+h;
+function hub(){stopL();save();if(S.hp<=0){S.hp=4;S.day++}if(S.day>S.max)return end();
+page(`<div class="news">${R(NEWS)}</div><div class="cn">Energy</div><div class="bar"><i style="width:${S.hp*10}%"></i></div>
+<button class="door" onclick="serve()">Potions Class<small>Brew what each student needs</small></button>
+<button class="door" onclick="spell()">Spell Practice<small>Pick the spell, then swipe the wand pattern</small></button>
+<button class="door" onclick="lore()">Library · Lore Quiz<small>Ingredients and potions</small></button>
+<button class="door" onclick="dict()">Grimoire<small>Learned ${nK()}/${TOT} entries</small></button>
+<button class="door" onclick="S.hp=Math.min(10,S.hp+4);S.day++;hub()">Rest<small>Recover energy, pass a day</small></button>`)}
+function end(){stopL();page(`<div class="card"><h3>Month Complete</h3><p class="sym" style="text-align:center">Gold ${S.coin} · Fame ${S.rep}<br>Rank: <b>${rank()}</b></p></div><button class="btn" onclick="S.day=1;S.hp=10;S.mo++;hub()">Next month</button><button class="btn alt" onclick="S=S0();hub()">Start over</button>`)}
+const fb=(ok,h,nx,last)=>page(`<div class="card"><h3 style="color:${ok?"#2d7a3a":"#8e2a2a"}">${ok?"✔ Correct":"✘ Not quite"}</h3><p class="sym">${h}</p></div><button class="btn" onclick="${nx}">${last?"Done":"Continue"}</button>`);
+/* potions */
+function serve(){const c=R(unl(PC)),p=P[c[0]],o=sh([p,...sh(P.filter(x=>x!==p)).slice(0,3)]);cs={c,p,o,pick:[]};
+page(`<div class="card"><h3>Student</h3><div class="sym">“${c[1]}”</div></div><div class="msg">Which potion helps?</div><div class="grid g2">${o.map(x=>`<button class="dr" onclick="potA('${x[0]}')">${x[0]}</button>`).join("")}</div>`)}
+function potA(n){const p=cs.p;if(n!==p[0]){S.rep=Math.max(0,S.rep-1);S.coin-=10;use();return fb(0,`“${n}” does not fit this problem.<br>The student needed <b>${p[0]}</b>: ${p[4]}<br>Recipe: ${p[1].map(i=>I[i][0]+" ("+I[i][1]+")").join(", ")}.<br>Fame −1, Gold −10.`,"hub()")}
+const ds=sh([...p[1],...sh(I.map((_,i)=>i).filter(i=>!p[1].includes(i))).slice(0,6)]);cs.ds=ds;cs.pick=[];ing()}
+function ing(){page(`<div class="card"><h3>${cs.p[0]}</h3><p class="sym" style="text-align:center">Choose 3 ingredients (${cs.pick.length}/3)<br><span class="cn" style="color:#2a1f45">Learned ingredients show their property.</span></p></div><div class="grid">${cs.ds.map(i=>`<button class="dr ${cs.pick.includes(i)?"on":""}" onclick="tog(${i})">${I[i][0]}${K[I[i][0]]?"<small>"+I[i][1]+"</small>":""}</button>`).join("")}</div>${cs.pick.length===3?`<button class="btn" onclick="heat()">Add to cauldron</button>`:""}`)}
+function tog(i){const a=cs.pick,k=a.indexOf(i);k>=0?a.splice(k,1):a.length<3&&a.push(i);ing()}
+function heat(){cs.ing=cs.pick.filter(i=>cs.p[1].includes(i)).length;cs.pick.forEach(i=>K[I[i][0]]=1);
+page(`<div class="card"><h3>Heat</h3><p class="sym" style="text-align:center">${cs.ing}/3 ingredients right. Pick the flame.</p></div><div class="grid">${["Low","Medium","High"].map((x,i)=>`<button class="dr" onclick="stir(${i})">${x}</button>`).join("")}</div>`)}
+function stir(h){cs.h=h;const s=cs.p[2],kn=K[cs.p[0]];
+page(`<div class="card"><h3>Simmer</h3><p class="sym" style="text-align:center">Tap “Bottle” when it has simmered long enough.<br><span class="cn" style="color:#2a1f45">${kn?"Gold zone is the right time.":"(Unknown recipe: no marks.)"}</span></p><div class="bigbar"><i id="fl" style="width:0"></i>${kn?`<em style="left:${s*.8/60*100}%;width:${s*.4/60*100}%"></em>`:""}</div><div class="cn" id="tt" style="text-align:center;color:#2a1f45">0 s</div></div><button class="btn" onclick="bottle()">Bottle</button>`);
+cs.t0=performance.now();stopL();const lp=()=>{const t=Math.min(60,(performance.now()-cs.t0)/100);$("fl").style.width=t/60*100+"%";$("tt").textContent=Math.round(t)+" s";if(t>=60)return bottle();raf=requestAnimationFrame(lp)};lp()}
+function bottle(){stopL();const p=cs.p,t=Math.min(60,(performance.now()-cs.t0)/100),s=p[2],sd=Math.abs(t-s)/s,hh=cs.h===p[3],tm=sd<=.2?2:sd<=.4?1:0,pt=cs.ing+(hh?1:0)+tm;K[p[0]]=1;use();
+const g=[0,5,10,15,25,35,50][pt],r=pt===6?3:pt>=5?2:pt>=3?1:0;S.coin+=g;S.rep+=r;
+fb(pt>=4,`<b>${["Ruined","Weak","Murky","Passable","Good","Excellent","Perfect"][pt]} ${p[0]}</b><br>Ingredients: ${cs.ing}/3 ${cs.ing<3?"(correct: "+p[1].map(i=>I[i][0]).join(", ")+")":""}<br>Flame: ${hh?"just right":"best was "+["Low","Medium","High"][p[3]]}<br>Simmer: ${Math.round(t)} s (best ≈ ${s} s) ${sd<=.2?"":t<s?"— too short, it stayed thin":"— too long, it turned bitter"}<br>${p[4]}<br>Gold +${g}, Fame +${r}`,"hub()")}
+/* spells */
+function spell(){const c=R(unl(SC)),sp=SP[c[0]],o=sh([sp,...sh(SP.filter(x=>x!==sp)).slice(0,3)]);cs={c,sp,o,seq:""};
+page(`<div class="card"><h3>Challenge</h3><div class="sym">${c[1]}</div></div><div class="msg">Which spell?</div><div class="grid g2">${o.map(x=>`<button class="dr" onclick="spA('${x[0]}')">${x[0]}</button>`).join("")}</div>`)}
+function spA(n){const sp=cs.sp;if(n!==sp[0]){const w=SP.find(x=>x[0]===n);S.rep=Math.max(0,S.rep-1);use();K[sp[0]]=1;return fb(0,`<b>${n}</b>: ${w[2]} That doesn't solve this.<br>The right spell is <b>${sp[0]}</b>: ${sp[2]}<br>Wand pattern: ${[...sp[1]].map(c=>AR[c]).join(" ")}<br>Fame −1.`,"hub()")}
+cs.seq="";pad()}
+function pad(){const kn=K[cs.sp[0]];page(`<div class="card"><h3>Cast ${cs.sp[0]}</h3><p class="sym" style="text-align:center">Swipe 3 strokes on the pad.<br><span class="cn" style="color:#2a1f45">${kn?"Pattern: "+[...cs.sp[1]].map(c=>AR[c]).join(" "):"Unlearned spell: no pattern shown. Check the Grimoire next time."}</span></p></div><div id="pad">${[...cs.seq].map(c=>AR[c]).join("")||"·"}</div><button class="btn alt" onclick="cs.seq='';pad()">Clear</button>`);
+const p=$("pad");let x0,y0;p.onpointerdown=e=>{x0=e.clientX;y0=e.clientY;p.setPointerCapture(e.pointerId)};
+p.onpointerup=e=>{const dx=e.clientX-x0,dy=e.clientY-y0;if(Math.hypot(dx,dy)<30)return;cs.seq+=Math.abs(dx)>Math.abs(dy)?(dx>0?"R":"L"):(dy>0?"D":"U");navigator.vibrate&&navigator.vibrate(15);if(cs.seq.length===3)return cast();pad()}}
+function cast(){const sp=cs.sp,ok=cs.seq===sp[1];K[sp[0]]=1;use();const g=ok?30:12,r=ok?2:0;S.coin+=g;S.rep+=r;
+fb(ok,ok?`<b>${sp[0]}</b> works! ${sp[3]}<br>Gold +${g}, Fame +${r}`:`You drew ${[...cs.seq].map(c=>AR[c]).join(" ")}, but <b>${sp[0]}</b> needs ${[...sp[1]].map(c=>AR[c]).join(" ")}.<br>${sp[3]}<br>Gold +${g}.`,"hub()")}
+/* lore quiz */
+function lore(){cs={n:0,ok:0};lq()}
+function lq(){const m=Math.random()<.5;let q,ans,opts;
+if(m){const i=Math.floor(Math.random()*I.length);ans=I[i][0];q=`Which ingredient is this? “${I[i][2]}”`;opts=sh([i,...sh(I.map((_,k)=>k).filter(k=>k!==i)).slice(0,3)]).map(k=>I[k][0])}
+else{const p=R(P),i=R(p[1]);ans=I[i][0];q=`Which ingredient belongs in ${p[0]}?`;opts=sh([i,...sh(I.map((_,k)=>k).filter(k=>!p[1].includes(k))).slice(0,3)]).map(k=>I[k][0]);cs.p=p}
+cs.q=q;cs.ans=ans;cs.m=m;page(`<div class="card"><h3>Lore ${cs.n+1}/3</h3><p class="sym">${q}</p></div><div class="grid g2">${opts.map(x=>`<button class="dr" onclick="lA('${x}')">${x}</button>`).join("")}</div>`)}
+function lA(x){const ok=x===cs.ans,a=I.find(i=>i[0]===cs.ans),w=I.find(i=>i[0]===x);K[a[0]]=1;K[x]=1;if(ok)cs.ok++;cs.n++;
+const h=(ok?"":`“${x}” is ${w[1]}: ${w[2]}<br>`)+`<b>${a[0]}</b> (${a[1]}): ${a[2]}`+(cs.m?"":`<br>${cs.p[0]} = ${cs.p[1].map(i=>I[i][0]).join(", ")}`);
+fb(ok,h,cs.n<3?"lq()":"lfin()",cs.n>=3)}
+function lfin(){use();const g=cs.ok*6;S.coin+=g;if(cs.ok===3)S.rep++;fb(cs.ok>=2,`Score ${cs.ok}/3<br>Gold +${g}${cs.ok===3?", Fame +1":""}`,"hub()",1)}
+/* grimoire */
+function dict(){stopL();page(`<div class="card"><h3>Grimoire ${nK()}/${TOT}</h3><div class="cn" style="text-align:center;color:#2a1f45">Entries you meet are unlocked (bright). Tap any entry.</div></div><div class="msg">Ingredients</div><div class="grid">${I.map((x,i)=>`<button class="dr" style="${K[x[0]]?"":"opacity:.5"}" onclick="di(${i})">${x[0]}</button>`).join("")}</div><div class="msg">Spells</div><div class="grid">${SP.map((x,i)=>`<button class="dr" style="${K[x[0]]?"":"opacity:.5"}" onclick="ds(${i})">${x[0]}</button>`).join("")}</div><div class="msg">Potions</div><div class="grid g2">${P.map((x,i)=>`<button class="dr" onclick="dp(${i})">${x[0]}</button>`).join("")}</div><button class="btn alt" onclick="hub()">Back</button>`)}
+function di(i){const x=I[i];K[x[0]]=1;save();page(`<div class="card"><h3>${x[0]}</h3><p class="sym">Property: ${x[1]}<br>${x[2]}<br>Used in: ${P.filter(p=>p[1].includes(i)).map(p=>p[0]).join(", ")||"—"}</p></div><button class="btn" onclick="dict()">Back</button>`)}
+function ds(i){const x=SP[i];K[x[0]]=1;save();page(`<div class="card"><h3>${x[0]}</h3><p class="sym">${x[2]}<br>Pattern: ${[...x[1]].map(c=>AR[c]).join(" ")}<br>${x[3]}</p></div><button class="btn" onclick="dict()">Back</button>`)}
+function dp(i){const x=P[i];K[x[0]]=1;save();page(`<div class="card"><h3>${x[0]}</h3><p class="sym">${x[4]}<br>Ingredients: ${x[1].map(k=>I[k][0]+" ("+I[k][1]+")").join(", ")}<br>Flame: ${["Low","Medium","High"][x[3]]}<br>Simmer: about ${x[2]} s</p></div><button class="btn" onclick="dict()">Back</button>`)}
+hub();
+</script></body></html>
