@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Midnight Antidote</title>
+<style>
+:root{--bg:#0d0a12;--card:rgba(32,24,38,.88);--ink:#f3e7cc;--dim:#b9aa88;--gold:#e3b657;--line:#5a4631;--bad:#ff7a88;--ok:#7be0a0;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 0,#3a2a44 0,var(--bg) 65%) fixed;color:var(--ink);font-family:'Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif}
+#app{max-width:560px;margin:0 auto;padding:14px 16px 40px;position:relative;z-index:1}
+#candles{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.55}
+#candles i{position:absolute;width:6px;height:26px;background:linear-gradient(#f6ecd2,#cdbf99);border-radius:2px;animation:fl 6s ease-in-out infinite}
+#candles i::before{content:"";position:absolute;left:50%;top:-12px;width:8px;height:12px;margin-left:-4px;border-radius:50% 50% 50% 50%/70% 70% 30% 30%;background:radial-gradient(#fff6c8,#ffb43c 60%,transparent);box-shadow:0 0 14px 6px rgba(255,180,60,.45)}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+#mus{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:5;width:46px;height:46px;border-radius:50%;border:1px solid var(--gold);background:var(--card);color:var(--ink);font-size:20px;cursor:pointer}
+.top{display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-size:15px;letter-spacing:.5px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:8px 0 12px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--bad))}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:28px}
+.chip{font-size:13px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card)}
+.chip.clue{color:var(--gold)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;line-height:1.55;font-size:18px}
+.msg{margin:12px 0 0;padding:10px 14px;border-left:3px solid var(--gold);background:var(--card);font-size:15px;color:var(--dim);border-radius:6px}
+.msg.bad{border-color:var(--bad);color:var(--bad)}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+button,input{font:inherit}
+.opt{text-align:left;padding:14px 16px;font-size:17px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.opt:active{border-color:var(--gold)}
+.opt:disabled{opacity:.35}
+.go{background:var(--gold);color:#1a1200;border-color:var(--gold);text-align:center;font-weight:bold}
+input[type=text]{width:100%;padding:14px;font-size:20px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;text-align:center;letter-spacing:2px}
+.pot{min-height:46px;display:flex;gap:8px;justify-content:center;align-items:center;margin-top:12px;padding:10px;border:2px dashed var(--line);border-radius:12px;font-size:15px}
+.row{display:flex;gap:10px}.row .opt{flex:1;text-align:center}
+em{color:var(--gold);font-style:italic}
+</style>
+<style>.collection-nav{position:relative;z-index:3;max-width:560px;margin:0 auto;padding:12px 16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;font:13px system-ui,sans-serif}.collection-nav a{color:var(--gold);text-decoration:none;border:1px solid var(--gold);padding:9px 12px;border-radius:9px;display:inline-flex;align-items:center;min-height:40px}.collection-nav span{opacity:.7}.collection-cover{height:104px;max-width:528px;margin:10px auto 0;border-radius:12px;background-position:center;background-size:cover;opacity:.9}.collection-nav a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}button{cursor:pointer}#app{min-height:0} @media(max-width:560px){.collection-cover{margin-left:16px;margin-right:16px;height:90px}} @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}</style><style>#app{max-width:740px;padding-bottom:90px}.collection-cover{display:none}.chapter-title{font-size:clamp(19px,4vw,28px);margin:12px 0;color:var(--gold)}.scene-art{width:100%;height:clamp(130px,28vw,220px);object-fit:cover;border:1px solid var(--line);border-radius:14px}.journal{margin:10px 0;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--card);font:14px/1.5 system-ui}.journal summary{cursor:pointer;color:var(--gold)}.journal p{color:var(--dim)}.snitch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.snitch-grid button{aspect-ratio:1.25;text-align:center;font-size:26px;background:#203b35;color:#a6b8a1}.snitch-grid button.target{color:#fff5be;background:#806026;border-color:#ffda72;box-shadow:0 0 16px #e3b65788}.maze{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;max-width:350px;width:100%;margin:auto}.tile{aspect-ratio:1;display:grid;place-items:center;background:#1c4d56;border-radius:8px;font-size:24px}.tile.wall{background:#1a252d;color:#66808a}.directions{display:flex;justify-content:center;gap:8px}.directions button{min-width:55px;text-align:center}.opt:hover{border-color:var(--gold)}.card{animation:arrive .25s ease-out}@keyframes arrive{from{opacity:.6;transform:translateY(5px)}to{opacity:1;transform:none}}</style><link rel="stylesheet" href="rpg.css"></head>
+<body><nav class="collection-nav"><a href="../">← Game collection</a><span>Progress saved on this device</span></nav><div class="collection-cover" aria-hidden="true" style="background-image:url(../assets/midnight.svg)"></div>
+<div id="candles"></div>
+<div id="app"></div>
+<button id="mus" aria-label="Toggle music">🔇</button>
+<script>
+const LIMIT=40;const limit=()=>({relaxed:60,standard:40,hard:30}[S.difficulty]||LIMIT);
+const IT={moonpetal:'🌙 Moonpetal',silverroot:'✨ Silverroot',dew:'💧 Sky dew',feather:'🪶 Owl feather',ember:'🔥 Candle ember',mist:'🌫️ Mist vial',nightshade:'☠️ Nightshade',scale:'🐉 Dragon scale'};
+const REC3=['ember','moonpetal','scale'];const REC1=['moonpetal','silverroot','dew'],REC2=['feather','ember','mist'];let REC=REC1;
+let S;
+const HN={hg:'🦁 Gryffindor',hr:'🦅 Ravenclaw',hh:'🦡 Hufflepuff',hs:'🐍 Slytherin'};
+function houseTag(){for(const k in HN)if(S.f[k])return HN[k];return '🏰 Hogwarts'}
+const SK='mhp1';
+function save(){try{if(S.scene==='intro')return;const r=JSON.parse(localStorage.getItem('collection.record.mhp1')||'{}');r.chapter=Math.max(r.chapter||0,chapter());r.bestPoints=Math.max(r.bestPoints||0,S.points||0);r.spells=[...new Set([...(r.spells||[]),...(S.spells||[])])];if(S.scene==='vaultdone'||S.scene==='win'||chapter()>=4)r.vault=true;if(S.scene==='cured'||S.f.c2)r.cured=true;if(terminal.includes(S.scene)){r.endings=[...new Set([...(r.endings||[]),S.scene])];}localStorage.setItem('collection.record.mhp1',JSON.stringify(r));if(terminal.includes(S.scene)&&S.scene!=='dawn')localStorage.removeItem(SK);else localStorage.setItem(SK,JSON.stringify(S))}catch(e){}}
+function hasSave(){try{return !!localStorage.getItem(SK)}catch(e){return false}}
+function newG(){S={scene:'intro',inv:[],f:{},t:0,msg:'',bad:false,pick:[],difficulty:'standard',chapter:1,points:0,spells:[],trial:{}}}
+const hall=()=>({t:'Back to the corridor',go:'hall'});
+const sc={
+intro:{loc:'Dormitory',text:()=>'The first night of term at Hogwarts. Your dormitory is silent, until an owl taps at the window and drops a note into your hands.',ch:[{t:'Read the note',go:'note'},{t:'▶ Continue saved game',go:'load',if:()=>hasSave()}]},
+note:{loc:'Dormitory',text:()=>'<em>“Wren has been frozen into stone by a bad potion in the common room. Only the Moonlight Antidote can free them, and it must be finished before the dawn bell. Find the recipe, gather the ingredients, and open the dungeon. Hurry. — A friend”</em>',ch:[{t:'Choose your house and sneak out',go:'house'}]},
+house:{loc:'Dormitory',text:()=>'Before you slip out, which house do you wear on your robes? Each comes with a small perk.',
+ ch:[{t:'🦁 Gryffindor: 8 extra moves before dawn',set:['hg'],go:'hall'},{t:'🦅 Ravenclaw: hints cost no time',set:['hr'],go:'hall'},{t:'🦡 Hufflepuff: failed brews cost no time',set:['hh'],go:'hall'},{t:'🐍 Slytherin: wrong answers cost no time',set:['hs'],go:'hall'}]},
+hall:{loc:'Hogwarts corridor',text:s=>'Moonlight spills across the stone floor. Three paths lead on: the library, the greenhouse, and a heavy dungeon door with three number dials.'+(s.f.open?' The dungeon door now stands open.':''),
+ ch:[{t:'📚 Visit the library',go:'library'},{t:'🌿 Visit the greenhouse',go:'greenhouse'},{t:'🚪 Try the dungeon door',go:'door',if:s=>!s.f.open},{t:'🕯️ Descend into the dungeon',go:'dungeon',if:s=>s.f.open}]},
+library:{loc:'Library',text:s=>s.f.recipe?'The restricted shelf stands open. You copied the recipe riddle, and noticed a number inked inside the cover: <em>3</em>.':'Shelves tower into the dark. A floating book blocks the restricted section and begins to whisper a riddle.',
+ ch:[{t:'Answer the book’s riddle',go:'riddle',if:s=>!s.f.recipe},hall()]},
+riddle:{loc:'Library',type:'puzzle',q:'“The more you take, the more you leave behind. What am I?”',ans:['footsteps','footstep','steps','step'],hint:'Think about walking down a long corridor.',
+ ok:{set:['recipe','d1'],go:'library',msg:'The book swings open. Inside: the recipe riddle, and the number 3.'},back:'library'},
+greenhouse:{loc:'Herbology Greenhouse',text:()=>'Glass walls drip with dew and the plants murmur in their sleep. A ghostly gardener wrings his hands beside the roses.',
+ ch:[{t:'Pick the glowing moonpetal',once:'gm',give:['moonpetal'],msg:'You pluck a moonpetal. It hums softly.'},
+ {t:'Pick the dark nightshade',once:'gn',give:['nightshade'],msg:'You gather some nightshade.'},
+ {t:'Read the plant labels',once:'gl',set:['d2'],msg:'Every pot is numbered. The one under the moonpetal reads: 7.'},
+ {t:'Talk to the ghost gardener',go:'ghost',if:s=>!s.f.d3},hall()]},
+ghost:{loc:'Herbology Greenhouse',text:()=>'“Please,” he sighs, “I lost my trowel a hundred years ago and I’ve been searching ever since. Won’t you spare a moment?”',
+ ch:[{t:'Help him search the flowerbeds',set:['kind','d3'],go:'greenhouse',msg:'You find the trowel in minutes. He beams: “The last number you seek is 1!”'},
+ {t:'Brush him off',set:['rude','d3'],go:'greenhouse',msg:'He mutters, “…the number is 1,” and sulks away.'}]},
+door:{loc:'Dungeon door',type:'puzzle',q:'Three brass dials glint in the gloom. Enter the numbers in this order: library, plant label, ghost gardener.',ans:['371'],hint:'Check your clue chips at the top.',
+ ok:{set:['open'],go:'dungeon',msg:'Click. The dungeon door swings open.'},back:'hall'},
+dungeon:{loc:'Potions Dungeon',text:()=>'Cold air, dripping stone, rows of shelves, and an old iron cauldron in the middle of it all.',
+ ch:[{t:'Take silverroot from the shelf',once:'ds',give:['silverroot'],msg:'The roots gleam like silver wire.'},
+ {t:'Take a vial of sky dew',once:'dd',give:['dew'],msg:'A vial of dew that fell from the clouds.'},
+ {t:'Take a dragon scale',once:'dc',give:['scale'],msg:'It is warm to the touch.'},
+ {t:'Take a vial of mist',once:'dm',give:['mist'],msg:'The vial swirls with pale mist.',if:s=>s.f.c2},{t:'🧪 Approach the cauldron',go:'brew'},hall()]},
+brew:{loc:'Cauldron',type:'brew'},
+cured:{loc:'Common room',text:()=>'The potion glows like liquid moonlight. You race upstairs and pour it over Wren. The stone cracks, colour floods back, and Wren gasps, then laughs.',ch:[{t:'Continue',set:['c2'],go:'c2intro'}]},
+c2intro:{loc:'Common room',text:()=>'Wren sits up, brushing stone dust from their sleeves. <em>“Thank you,”</em> they whisper. <em>“It was no accident. Someone dropped something into my cauldron. I saw a silver ring glint in the candlelight, and a burnt scrap of parchment fell. We have until the next dawn bell to find them.”</em>',ch:[{t:'Hunt for clues',go:'hall2'}]},
+hall2:{loc:'Hogwarts corridor',text:s=>'Grey morning light creeps through the windows. '+(s.f.clear?'Glowing footprints shimmer on the floor, leading up toward the tower.':'Clues lie in the Owlery and the Great Hall, and the cauldron waits below.'),
+ ch:[{t:'🦉 Climb to the Owlery',go:'owlery'},{t:'🍽️ Enter the Great Hall',go:'hall3'},{t:'🕯️ Descend to the cauldron',go:'dungeon'},{t:'👣 Follow the glowing footprints',go:'confront',if:s=>s.f.clear}]},
+owlery:{loc:'Owlery',text:()=>'Feathers drift through the cold air. A barn owl clutches a burnt scrap of parchment in its beak.',
+ ch:[{t:'Read the burnt parchment',go:'cipher',if:s=>!s.f.letter},{t:'Take an owl feather',once:'of',give:['feather'],msg:'A soft grey feather.'},{t:'Back to the corridor',go:'hall2'}]},
+cipher:{loc:'Owlery',type:'puzzle',q:'The parchment reads: UIF HSFBU IBMM. Each letter is one step ahead of the real one. Where is the secret meeting?',ans:['thegreathall','greathall'],hint:'Move every letter back by one: U becomes T.',
+ ok:{set:['letter','r2'],go:'owlery',msg:'It says “The Great Hall.” A second riddle on the back describes a Draught of Clear Sight.'},back:'owlery'},
+hall3:{loc:'Great Hall',text:()=>'Four long tables stretch under a ceiling of drifting clouds. Portraits murmur behind you.',
+ ch:[{t:'Examine the silver ring on the floor',once:'gr',set:['ring'],msg:'The ring is engraved with the initials S.V.'},{t:'Take a glowing candle ember',once:'ge',give:['ember'],msg:'The ember burns without smoke.'},{t:'Ask the portraits about S.V.',once:'gp',msg:'“Silas Vane,” they whisper. “A prefect who lost the potions prize to Wren.”'},{t:'Back to the corridor',go:'hall2'}]},
+confront:{loc:'Astronomy Tower',text:()=>'The footprints end at the top of the tower, where a prefect stares at the stars, a silver ring missing from his finger. It is Silas Vane.',
+ ch:[{t:'Accuse Silas with your evidence',go:'endA',if:s=>s.f.ring||s.f.letter},{t:'Accuse the caretaker instead',go:'endB'},{t:'Speak to Silas kindly first',go:'end',if:s=>s.f.ring&&s.f.letter}]},
+endA:{loc:'Dawn',text:()=>'Silas confesses under the weight of the evidence and is led away. Wren is safe, but the castle feels a little colder. <em>Ending: Justice served.</em>',ch:[{t:'Play again',go:'reset'}]},
+endB:{loc:'Dawn',text:()=>'The caretaker blinks in confusion while Silas slips down the stairs. Wren is safe, but the saboteur is still out there. <em>Ending: Wrong target.</em>',ch:[{t:'Play again',go:'reset'}]},
+end:{loc:'Dawn',text:s=>'Silas admits he envied Wren and never meant it to go so far. Your kindness earns his apology, and the three of you are awarded fifty points at the dawn feast. '+(s.f.kind?'In the greenhouse, the gardener ghost waves his trowel in salute. ':'')+'Then Silas lowers his voice: <em>“There is something beneath the clock tower that you must see.”</em>',ch:[{t:'Continue to Chapter 3',set:['c3','r3'],go:'c3intro'}]},
+c3intro:{loc:'Clock tower',text:()=>'Silas wipes his eyes. <em>“I wanted the founders’ vault beneath the clock tower: lost recipes that would have made me famous. It only opens for a Dawnlight Elixir, and I never cracked the recipe.”</em> He presses a scrap into your hand: <em>“First, what burns without a hearth. Then, what blooms beneath the moon. Last, what a dragon sheds.”</em> Wren grins. <em>“Let’s open it together.”</em>',ch:[{t:'Head for the clock tower',go:'hall4'}]},
+hall4:{loc:'Hogwarts corridor',text:s=>'The clock tower looms over the castle, and the vault lies sealed beneath it.'+(s.f.vopen?' The vault door stands open.':'')+(s.f.sun?' The elixir glows warm in your satchel.':''),
+ ch:[{t:'🕰️ Climb the clock tower',go:'clock'},{t:'🕯️ Descend to the cauldron',go:'dungeon'},{t:'🗝️ Enter the vault',go:'vault',if:s=>s.f.vopen&&s.f.sun}]},
+clock:{loc:'Clock tower',text:()=>'The great clock’s hands are frozen. A brass plaque reads: <em>“Reverse the road you walked at the dungeon door.”</em>',
+ ch:[{t:'Try the vault door',go:'vdoor',if:s=>!s.f.vopen},{t:'Back down',go:'hall4'}]},
+vdoor:{loc:'Vault door',type:'puzzle',q:'The vault door has three dials. The plaque says: reverse the road you walked at the dungeon door.',ans:['173'],hint:'Take the code you used at the dungeon door and read it backward.',ok:{set:['vopen'],go:'clock',msg:'The dials spin, and the vault door groans open.'},back:'clock'},
+vault:{loc:'The Vault',text:()=>'Lantern light drifts over shelves of ancient recipe books. A shimmering guardian rises and speaks: <em>“Say my name and I am gone. What am I?”</em>',ch:[{t:'Answer the guardian',go:'guard'}]},
+guard:{loc:'The Vault',type:'puzzle',q:'The guardian waits. “Say my name and I am gone. What am I?”',ans:['silence','quiet'],hint:'Think about what you break the moment you speak.',ok:{go:'vaultdone',msg:'The guardian smiles and fades.'},back:'vault'},
+win:{loc:'The Vault',text:s=>'The vault is yours. '+houseTag()+' earns two hundred points, Silas is given a second chance, and Wren pockets the oldest recipe for next term. <em>The first mystery is solved.</em>',ch:[{t:'Continue to Chapter 4',go:'c4intro'},{t:'Play again',go:'reset'}]},
+dawn:{loc:'Dawn',text:s=>s.f.c2?'The dawn bell tolls. The trail has gone cold and the saboteur slips away. Perhaps with a quicker route through the castle…':'The dawn bell tolls. Wren stays frozen for one more day. Perhaps with a quicker route through the castle…',ch:[{t:'Retry this chapter',go:'retry',if:s=>!!s.checkpoint},{t:'Start over',go:'reset'}]}
+};
+const EXTRA={"vaultdone": {"loc": "The Vault", "text": "The guardian fades, leaving a compass that points into the Forbidden Forest. Wren hears a voice calling from its needle. The vault was only the beginning.", "ch": [{"t": "Continue to Chapter 4", "go": "c4intro"}]}, "c4intro": {"loc": "Forbidden Forest", "text": "Hagrid has found an injured mooncalf and a trail of silver leaves. The compass whispers that something is stealing magic from the castle. Choose how to approach.", "ch": [{"t": "Help the mooncalf first (+ friendship)", "go": "forestcare", "set": ["beastfriend"], "points": 15}, {"t": "Follow the trail immediately", "go": "forestpath"}]}, "forestcare": {"loc": "Hagrid’s clearing", "text": "Wren wraps the creature in a cloak. It nudges you toward a hidden path. Hagrid teaches you the light spell Lumos.", "ch": [{"t": "Follow the silver leaves", "go": "forestpath"}]}, "forestpath": {"loc": "Forbidden Forest", "text": "Three enchanted gates bar the trail. A fallen sign describes their weaknesses. Learn Lumos, then choose the appropriate spell at each gate.", "ch": [{"t": "Attempt the forest trial", "go": "foresttrial"}]}, "c5intro": {"loc": "Chamber of Echoes", "text": "The forest spirit gives you a silver key. Below the castle, a hidden chamber repeats every sound twice. Silas has followed you, carrying an old map.", "ch": [{"t": "Enter with Silas (+ trust)", "go": "echo", "set": ["silastrust"], "points": 10}, {"t": "Ask Silas to guard the entrance", "go": "echo"}]}, "c6intro": {"loc": "Quidditch pitch", "text": "The chamber reveals a seal hidden inside the Golden Snitch used in the next house match. Madam Hooch allows you to try out as a seeker.", "ch": [{"t": "Mount your broom", "go": "quidditch"}]}, "c7intro": {"loc": "Room of Requirement", "text": "The Snitch opens, releasing a fragment of the castle’s memory. A mirror appears. It offers visions of your deepest wishes, but Wren warns that only one path leads onward.", "ch": [{"t": "Study the mirror’s moving symbols", "go": "mirrortrial"}]}, "c8intro": {"loc": "Black Lake", "text": "The mirror reveals the second seal beneath the Black Lake. Professor Flitwick teaches you a bubble-head charm, but the lake guardian demands a safe passage through its maze.", "ch": [{"t": "Dive beneath the surface", "go": "lakemaze"}]}, "c9intro": {"loc": "Great Hall", "text": "With two seals restored, the castle shakes. Living shadows rise around the Great Hall. Professor McGonagall asks you to shield the younger students. Your friends stand beside you.", "ch": [{"t": "Defend the students together", "go": "dueltrial", "set": ["defender"], "points": 15}, {"t": "Race directly toward the shadow", "go": "dueltrial"}]}, "c10intro": {"loc": "Astronomy Tower", "text": "The final shadow is not a monster but the echo of a forgotten student, trapped in a spell for decades. The compass, seals and your friends can break the curse. What kind of wizard will you be?", "ch": [{"t": "Break the curse through a final spell trial", "go": "finaltrial"}]}, "finalchoice": {"loc": "Astronomy Tower", "text": "The shadow collapses into a frightened figure. The power of the founders is yours to decide. Your actions throughout the adventure have earned your friends’ trust.", "ch": [{"t": "Restore the lost student and share the knowledge", "go": "hero", "points": 30}, {"t": "Seal the dangerous magic away", "go": "guardianend", "points": 20}, {"t": "Keep the power for your house", "go": "ambition", "points": 10}]}, "hero": {"loc": "Dawn at Hogwarts", "text": "You restore the forgotten student. Wren and Silas stand beside you as the castle celebrates a new dawn. Ending: The Light of Hogwarts.", "ch": [{"t": "Play again", "go": "reset"}, {"t": "Replay final chapter", "go": "retry"}]}, "guardianend": {"loc": "Dawn at Hogwarts", "text": "You seal the dangerous magic and become the vault’s protector. Ending: Keeper of the Secrets.", "ch": [{"t": "Play again", "go": "reset"}, {"t": "Replay final chapter", "go": "retry"}]}, "ambition": {"loc": "Dawn at Hogwarts", "text": "Your house gains extraordinary knowledge, but the other houses wonder what you will do with it. Ending: The Ambitious Heir.", "ch": [{"t": "Play again", "go": "reset"}, {"t": "Replay final chapter", "go": "retry"}]}};for(const [id,v] of Object.entries(EXTRA)){sc[id]={...v,text:()=>v.text}};
+const NAMES=["The Midnight Antidote", "The Silver Ring", "The Founders’ Vault", "The Forbidden Forest", "The Chamber of Echoes", "The Quidditch Cup", "The Mirror of Memories", "The Black Lake", "The Midnight Siege", "The Last Dawn"];
+const TRIALS={foresttrial:{loc:'Forest gates',title:'Spellcraft • Forest gates: Lumos lights darkness, Alohomora unlocks doors, Protego shields attacks.',spell:'Lumos',next:'c5intro',rounds:[['A dark tunnel hides the path.','Lumos','Alohomora','Protego'],['A locked iron gate blocks the trail.','Alohomora','Lumos','Protego'],['A branch lashes toward your face.','Protego','Lumos','Accio']]},echo:{loc:'Chamber of Echoes',title:'Echo cipher',next:'c6intro',spell:'Alohomora',rounds:[['A rune says: what repeats your voice without a mouth?','Echo','Shadow','Mirror'],['The map says north, east, south. Which direction reverses east?','West','North','South'],['A door says 2, 4, 8, 16, ?.','32','24','30']]},quidditch:{loc:'Quidditch stadium',title:'Seeker challenge',next:'snitcharena',spell:'Accio',rounds:[['A Bludger approaches from your left.','Dodge right','Dodge left','Stop'],['The Snitch dives below the stands.','Dive','Climb','Land'],['It changes direction sharply upward.','Climb','Dive','Turn left'],['The Snitch is within reach.','Catch','Wait','Turn away']]},mirrortrial:{loc:'Room of Requirement',title:'Memory of the founders',next:'c8intro',spell:'Revelio',memory:['🦁','🦅','🦡','🐍','⭐']},lakemaze:{loc:'Black Lake',title:'Underwater maze',next:'c9intro',spell:'Bubble-Head Charm',maze:true},dueltrial:{loc:'Great Hall',title:'Wizard duel: Protego shields, Expelliarmus disarms, Accio summons, Lumos lights.',next:'c10intro',spell:'Expelliarmus',rounds:[['A shadow launches a curse at you.','Protego','Accio','Lumos'],['Its wand is exposed.','Expelliarmus','Lumos','Alohomora'],['Dark fog covers the students.','Lumos','Accio','Alohomora'],['A fallen shield must be pulled to safety.','Accio','Expelliarmus','Lumos']]},finaltrial:{loc:'Astronomy Tower',title:'The final enchantment: Revelio reveals, Expecto Patronum summons hope.',next:'finalchoice',spell:'Expecto Patronum',rounds:[['The shadow attacks. Protect your friends.','Protego','Accio','Lumos'],['Reveal the hidden curse.','Revelio','Alohomora','Accio'],['Disarm the cursed wand.','Expelliarmus','Lumos','Protego'],['Summon a light of hope.','Expecto Patronum','Accio','Alohomora']]}};
+TRIALS.snitcharena={loc:'Quidditch stadium',title:'Catch the Golden Snitch',next:'c7intro',spell:'Seeker’s reflexes',catch:true};
+for(const [id,v] of Object.entries(TRIALS))sc[id]={loc:v.loc,type:'trial'};
+const terminal=['endA','endB','dawn','hero','guardianend','ambition'];
+function chapter(){return S.chapter|| (S.f.c3?3:S.f.c2?2:1)}
+function enrich(){S.chapter=chapter();S.points=Number(S.points)||0;S.spells=Array.isArray(S.spells)?S.spells:[];S.trial=S.trial||{};}
+function checkpoint(){const cp=JSON.parse(JSON.stringify(S));delete cp.checkpoint;cp.trial={};cp.msg='';cp.bad=false;S.checkpoint=cp;}
+function reward(n){S.points+=n;}
+function completeTrial(v){if(!v.catch&&!S.spells.includes(v.spell))S.spells.push(v.spell);reward(40);S.trial={};S.msg='Challenge complete! +40 house points · '+v.spell+' mastered.';sfx(1);goto(v.next)}
+function penalty(msg){if(!S.f.hs)tick();S.bad=true;S.msg=msg; sfx(0);goto(S.scene)}
+let arenaTimer=0;function trial(sce,msg){const v=TRIALS[S.scene];const a=S.trial;app.append(h('div','card',v.title));if(msg)app.append(h('div','msg'+(S.bad?' bad':''),msg));S.bad=false;
+ const o=h('div','opts');app.append(o);
+ if(v.catch){if(!Number.isInteger(a.target))a.target=Math.floor(Math.random()*12);a.hits=a.hits||0;const desc=h('div','msg','Catch the golden target three times. Hits '+a.hits+' / 3.');const board=h('div','snitch-grid');let buttons=[];function drawTarget(){buttons.forEach((b,i)=>{b.textContent=i===a.target?'✦':'·';b.classList.toggle('target',i===a.target);b.setAttribute('aria-label',i===a.target?'Golden Snitch':'Empty square')})}for(let i=0;i<12;i++){const b=h('button','opt','·');b.onclick=()=>{if(i===a.target){a.hits++;sfx(1);if(a.hits>=3)return completeTrial(v);a.target=(a.target+1+Math.floor(Math.random()*11))%12;render()}else penalty('Missed! Watch for the gold target.');};board.append(b);buttons.push(b)}o.append(desc,board);drawTarget();if(!matchMedia('(prefers-reduced-motion: reduce)').matches)arenaTimer=setInterval(()=>{if(S.scene!=='snitcharena'||document.hidden)return;a.target=(a.target+1+Math.floor(Math.random()*11))%12;drawTarget()},({relaxed:1400,standard:1050,hard:750}[S.difficulty]||1050));return}
+ if(v.memory){if(!a.sequence){a.sequence=[...v.memory].sort(()=>Math.random()-.5);a.pos=0;a.show=true;save()}if(a.show){o.append(h('div','card','Memorise the order: '+a.sequence.join('  ')));const b=h('button','opt go','I’m ready');b.onclick=()=>{a.show=false;render()};o.append(b)}else{o.append(h('div','msg','Symbol '+(a.pos+1)+' of '+a.sequence.length));for(const symbol of v.memory){const b=h('button','opt',symbol);b.onclick=()=>{if(symbol===a.sequence[a.pos]){a.pos++;if(a.pos===a.sequence.length)return completeTrial(v);render()}else{a.pos=0;a.show=true;penalty('The mirror flickers. Try the sequence again.')}};o.append(b)}}return}
+ if(v.maze){const map=['.....','.##.#','...#.','##...','.....'];if(!a.pos){a.pos=[0,0];save()}const grid=h('div','maze');map.forEach((line,r)=>[...line].forEach((cell,c)=>{const here=a.pos[0]===r&&a.pos[1]===c;grid.append(h('div','tile'+(cell==='#'?' wall':''),here?'🧙':r===4&&c===4?'🔑':cell==='#'?'▓':'·'))}));o.append(grid,h('div','msg','Guide yourself to the key. Avoid the rocks.'));const controls=h('div','directions');for(const [txt,dr,dc] of [['↑',-1,0],['←',0,-1],['↓',1,0],['→',0,1]]){const b=h('button','opt',txt);b.onclick=()=>{let r=a.pos[0]+dr,c=a.pos[1]+dc;if(!map[r]||map[r][c]!=='.')return penalty('A rock blocks that route.');a.pos=[r,c];tick();if(r===4&&c===4)return completeTrial(v);goto(S.scene)};controls.append(b)}o.append(controls);return}
+ const i=a.i||0,round=v.rounds[i];o.append(h('div','msg','Round '+(i+1)+' / '+v.rounds.length),h('div','card',round[0]));if(!a.order){a.order=[1,2,3].sort(()=>Math.random()-.5);save()}for(const j of a.order){const b=h('button','opt',round[j]);b.onclick=()=>{if(j===1){a.i=i+1;delete a.order;sfx(1);if(a.i===v.rounds.length)return completeTrial(v);reward(5);S.msg='Excellent! +5 house points.';render()}else penalty('Not quite. Choose the spell or movement that fits the situation.')};o.append(b)}
+}
+
+const app=document.getElementById('app');
+function h(tag,cls,txt,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html)e.innerHTML=html;else if(txt!=null)e.textContent=txt;return e}
+function goto(id){
+  if(id==='retry'&&S.checkpoint){const cp=structuredClone(S.checkpoint);S=cp;checkpoint();return render()}
+  if(id==='reset'){try{localStorage.removeItem(SK)}catch(e){}newG();return render()}
+  if(id==='load'){try{const loaded=JSON.parse(localStorage.getItem(SK));if(!loaded||!sc[loaded.scene]||!loaded.f||!Array.isArray(loaded.inv))throw Error('Invalid save');S=loaded;S.pick=S.pick||[];enrich();if(S.scene==='win')S.scene='vaultdone'}catch(e){newG()}return render()}
+  if(id==='hall'&&S.f.c3)id='hall4';else if(id==='hall'&&S.f.c2)id='hall2';
+  const match=/^c(\d+)intro$/.exec(id);if(match){S.chapter=Number(match[1]);S.t=S.f.hg?-8:0;S.trial={};reward(25);}
+  if(S.f.hg&&!S.f.hgd){S.f.hgd=1;S.t-=8}
+  S.scene=id;if(match||id==='hall'&&!S.checkpoint){checkpoint()}
+  if(S.t>=limit()&&!['cured','end','endA','endB','dawn','confront','c2intro','c3intro','win','vaultdone','hero','guardianend','ambition'].includes(id))S.scene='dawn';
+  render();
+}
+function tick(){S.t++}
+function apply(c){
+  (c.set||[]).forEach(k=>S.f[k]=1);(c.give||[]).forEach(i=>{if(!S.inv.includes(i))S.inv.push(i)});
+  if(c.once)S.f[c.once]=1;if(c.points)reward(c.points);
+}
+function render(){
+  clearInterval(arenaTimer);enrich();save();
+  const sce=sc[S.scene];app.innerHTML='';
+  const top=h('div','top');top.append(h('span',null,'📍 '+sce.loc),h('span',null,houseTag()));app.append(top);const hd=h('h1','chapter-title','Chapter '+chapter()+' / 10 · '+NAMES[chapter()-1]);app.append(hd);const heroArt=h('img','scene-art');heroArt.src='../assets/chapter-'+chapter()+'.svg';heroArt.alt='';app.append(heroArt);const journal=h('details','journal');journal.append(h('summary',null,'📖 Wizard journal · '+S.points+' house points'));journal.append(h('p',null,'Mastered spells: '+(S.spells.join(', ')||'None yet')),h('p',null,'Friends: '+[S.f.kind?'Gardener':null,S.f.beastfriend?'Mooncalf':null,S.f.silastrust?'Silas':null].filter(Boolean).join(', ')));journal.append(h('p',null,'Story chapters: '+NAMES.map((n,i)=>(i+1<=chapter()?'✓ ':'🔒 ')+(i+1)+'. '+n).join(' · ')));app.append(journal);
+  const bar=h('div','bar');const i=h('i');i.style.width=Math.max(0,Math.min(100,S.t/limit()*100))+'%';bar.append(i);app.append(bar);
+  const chips=h('div','chips');
+  S.inv.forEach(k=>chips.append(h('span','chip',IT[k])));
+  if(S.f.recipe||S.f.d1||S.f.d2||S.f.d3)chips.append(h('span','chip clue','Door code: '+(S.f.d1?'3':'?')+' '+(S.f.d2?'7':'?')+' '+(S.f.d3?'1':'?')));
+  app.append(chips);
+  const msg=S.msg;S.msg='';
+   if(S.scene==='intro'){const box=h('div','msg');box.append(h('span',null,'Difficulty: '));const sel=h('select');sel.setAttribute('aria-label','Difficulty for new game');sel.style.cssText='font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);padding:6px;border-radius:6px';[['relaxed','Relaxed · 60 moves'],['standard','Standard · 40 moves'],['hard','Hard · 30 moves']].forEach(([v,t])=>{const op=h('option',null,t);op.value=v;sel.append(op)});sel.value=S.difficulty||'standard';sel.onchange=()=>S.difficulty=sel.value;box.append(sel);app.append(box)}else{app.append(h('div','msg',Math.max(0,limit()-S.t)+' moves left · Chapter '+chapter()))}
+  if(sce.type==='trial')return trial(sce,msg);
+  if(sce.type==='puzzle')return puzzle(sce,msg);
+  if(sce.type==='brew')return brew(msg);
+  app.append(h('div','card',null,sce.text(S)));
+  if(msg)app.append(h('div','msg'+(S.bad?' bad':''),msg));S.bad=false;
+  const o=h('div','opts');
+  sce.ch.filter(c=>(!c.if||c.if(S))&&!(c.once&&S.f[c.once])).forEach((c,n)=>{
+    const b=h('button','opt'+(c.go==='end'||c.go==='reset'||S.scene==='intro'||S.scene==='note'?' go':''),c.t);
+    b.onclick=()=>{apply(c);if(!['reset','load','end','cured','retry'].includes(c.go||S.scene))tick();S.msg=c.msg||'';goto(c.go||S.scene)};
+    o.append(b);
+  });
+  app.append(o);
+}
+function puzzle(sce,msg){
+  app.append(h('div','card',sce.q));
+  if(msg)app.append(h('div','msg'+(S.bad?' bad':''),msg));S.bad=false;
+  const inp=h('input');inp.type='text';inp.autocomplete='off';inp.placeholder='Your answer';inp.inputMode=sce.ans[0]/1>=0?'numeric':'text';
+  const w=h('div','opts');w.append(inp);
+  const sub=h('button','opt go','🪄 Cast answer');
+  const go=()=>{
+    const v=inp.value.trim().toLowerCase().replace(/[\s,\-]/g,'');
+    if(sce.ans.includes(v)){reward(10);tick();apply(sce.ok);S.msg=sce.ok.msg;goto(sce.ok.go)}
+    else{if(!S.f.hs)tick();S.bad=true;S.msg='Nothing happens. That isn’t right.';sc[S.scene]&&goto(S.scene)}
+  };
+  sub.onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};
+  const row=h('div','row');
+  const hb=h('button','opt','✨ Lumos (hint)');hb.onclick=()=>{if(!S.f.hr)tick();S.msg=sce.hint;S.bad=false;goto(S.scene)};
+  const bk=h('button','opt','Leave');bk.onclick=()=>goto(sce.back);
+  row.append(hb,bk);w.append(sub,row);app.append(w);
+  if(S.msg){}
+}
+function brew(msg){
+  const c3=S.f.c3,c2=S.f.c2,known=c3?S.f.r3:c2?S.f.r2:S.f.recipe;REC=c3?REC3:c2?REC2:REC1;
+  app.append(h('div','card',null,known?'The recipe riddle you copied reads:<br><em>'+(c3?'“First, what burns without a hearth. Then, what blooms beneath the moon. Last, what a dragon sheds.”':c2?'“First, what carries letters through the night. Then, what burns without a hearth. Last, what hides the morning hills.”':'“First, what blooms beneath the moon. Then, what gleams below the soil. Last, a drop of what the sky lets fall.”')+'</em><br>Add three ingredients in order, then stir.':'You never found the recipe. The cauldron bubbles, waiting. Add three ingredients in order and stir, if you dare.'));
+  if(msg)app.append(h('div','msg'+(S.bad?' bad':''),msg));S.bad=false;
+  const pot=h('div','pot');
+  if(!S.pick.length)pot.textContent='The cauldron is empty';
+  S.pick.forEach((k,n)=>pot.append(h('span','chip',(n+1)+'. '+IT[k])));
+  app.append(pot);
+  const o=h('div','opts');
+  if(!S.inv.length)o.append(h('div','msg bad','You have no ingredients yet. Explore the castle first.'));
+  S.inv.forEach(k=>{
+    const b=h('button','opt',IT[k]);b.disabled=S.pick.includes(k)||S.pick.length>=3;
+    b.onclick=()=>{S.pick.push(k);render()};o.append(b);
+  });
+  const row=h('div','row');
+  const st=h('button','opt go','🥄 Stir');st.disabled=S.pick.length<3;
+  st.onclick=()=>{
+    const n=S.pick.filter((k,i)=>k===REC[i]).length;
+    if(n===3){reward(20);S.pick=[];sfx(1);if(S.f.c3){S.f.sun=1;S.msg='The Dawnlight Elixir glows warm gold. It will wake the vault.';return goto('hall4')}if(S.f.c2){S.f.clear=1;S.msg='The potion shimmers silver. Glowing footprints appear on the floor, leading upward!';return goto('hall2')}return goto('cured')}
+    sfx(0);if(!S.f.hh)tick();S.pick=[];S.bad=true;S.msg='The brew fizzles into grey smoke. '+n+' of 3 ingredients were in the right place.';goto(S.t>=limit()?'dawn':'brew');
+  };
+  const em=h('button','opt','Empty');em.onclick=()=>{S.pick=[];render()};
+  const lv=h('button','opt','Leave');lv.onclick=()=>{S.pick=[];goto('dungeon')};
+  row.append(st,em);o.append(row,lv);app.append(o);
+}
+/* Original ambient music, generated live with Web Audio */
+const mf=m=>440*Math.pow(2,(m-69)/12);
+const CH=[[50,57,62,65,69,74],[46,53,58,62,65,70],[43,50,55,58,62,67],[45,52,57,61,64,69]];
+let ac,mg,on=false,nx=0,stp=0,started=false;
+function tone(m,t,d,v,ty){const o=ac.createOscillator(),g=ac.createGain();o.type=ty||'sine';o.frequency.value=mf(m);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.05)}
+function pad(c,t){const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=700;f.connect(mg);[c[0],c[2],c[3]].forEach(m=>{[-6,6].forEach(dt=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sawtooth';o.frequency.value=mf(m);o.detune.value=dt;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.018,t+.8);g.gain.exponentialRampToValueAtTime(.0001,t+2.7);o.connect(g);g.connect(f);o.start(t);o.stop(t+2.8)})})}
+function play(s,t){const c=CH[Math.floor(s/8)%4],k=s%8;if(k===0){pad(c,t);tone(c[0]-12,t,2.4,.12)}const p=[1,2,3,4,5,4,3,2][k];tone(c[p]+12,t,.9,.06,'triangle');tone(c[p]+24,t,.4,.025);if((k===3||k===7)&&Math.random()<.6)tone(c[2+Math.floor(Math.random()*4)]+24,t+.15,.8,.03)}
+function startMusic(){if(!ac){ac=new(window.AudioContext||window.webkitAudioContext)();mg=ac.createGain();mg.gain.value=0;const cv=ac.createConvolver(),L=ac.sampleRate*2.5|0,b=ac.createBuffer(2,L,ac.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<L;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/L,2.5)}cv.buffer=b;const w=ac.createGain();w.gain.value=.7;mg.connect(ac.destination);mg.connect(cv);cv.connect(w);w.connect(ac.destination);setInterval(()=>{if(!on)return;while(nx<ac.currentTime+.4){play(stp++,nx);nx+=.32}},100)}ac.resume();nx=ac.currentTime+.1}
+function setMusic(v){on=v;if(v){startMusic();mg.gain.setTargetAtTime(.8,ac.currentTime,.3)}else if(ac)mg.gain.setTargetAtTime(0,ac.currentTime,.2);document.getElementById('mus').textContent=v?'🎵':'🔇'}
+function sfx(ok){if(!ac||!on)return;const t=ac.currentTime;if(ok)[74,77,81,86,89].forEach((m,i)=>tone(m,t+i*.1,1.2,.08,'triangle'));else{tone(38,t,.8,.08,'sawtooth');tone(37,t,.8,.06,'sawtooth')}}
+document.getElementById('mus').onclick=e=>{e.stopPropagation();started=true;setMusic(!on)};
+addEventListener('pointerdown',e=>{if(started||e.target.id==='mus')return;started=true;setMusic(true)});
+const cdl=document.getElementById('candles');for(let i=0;i<16;i++){const c=document.createElement('i');c.style.left=Math.random()*100+'%';c.style.top=Math.random()*55+'%';c.style.animationDelay=(-Math.random()*6)+'s';c.style.animationDuration=(5+Math.random()*4)+'s';cdl.append(c)}
+</script>
+<script src="rpg.js"></script>
+<script>newG();render();</script>
+</body>
+</html>
